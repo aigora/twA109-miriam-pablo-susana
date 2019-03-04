@@ -1,11 +1,19 @@
-# Título del trabajo
+﻿# 
 
 Descripción breve del proyecto a realizar (2-3 frases).
 
 ## Integrantes del equipo
 
-Nombres, apellidos, y usuario GitHub de los integrantes del equipo.
+* Miriam Ortega Bustos (miriamortegabustos)
+* Pablo Daniel Martin de Domingo (danielmdomingo)
+* Susana Rincón Álvarez (susanarincon)
 
 ## Objetivos del trabajo
 
-Lista de los objetivos que se persiguen con el trabajo propuesto.
+* Creacción de un coche equipado con un ultrasonidos.
+* Comunicación por bluetooth entre el coche y un ordenador.
+* Capacidad del vehiculo para mapear su entorno.
+* Dibujar este mapa en el ordenador.
+* El robot tendria dos modos:
+	* Controlado desde el ordenador.
+	* Modo autónomo, en el que el ordenador calcula una ruta hasta una posicion ordenada.
