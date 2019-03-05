@@ -1,6 +1,6 @@
-﻿# 
+﻿#MovAut 
 
-Descripción breve del proyecto a realizar (2-3 frases).
+Un rover equipado con ultrasonidos comunicado con pc. Puede dirigirse manualmente o darle una posicion, a la que él tratará de llegar evitando obstáculos.
 
 ## Integrantes del equipo
 
@@ -17,3 +17,23 @@ Descripción breve del proyecto a realizar (2-3 frases).
 * El robot tendria dos modos:
 	* Controlado desde el ordenador.
 	* Modo autónomo, en el que el ordenador calcula una ruta hasta una posicion ordenada.
+
+* Sensores:
+  
+	* Fin de carrera
+  
+	* Ultrasonidos (sensor)
+  
+	* Módulo Bluetooth
+  
+	* Teclado del ordenador
+
+* Actuadores
+  
+	* 2 motores
+  
+	* Servo
+  
+	* Ultrasonidos (emisor)
+  
+	* Pantalla del ordenador (el proyecto se controlará desde una aplicacion)
