@@ -1,4 +1,4 @@
-﻿##MovAut 
+﻿## MovAut 
 
 Un rover equipado con ultrasonidos comunicado con pc. Puede dirigirse manualmente o darle una posicion, a la que él tratará de llegar evitando obstáculos.
 
