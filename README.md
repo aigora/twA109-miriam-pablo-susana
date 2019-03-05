@@ -1,4 +1,4 @@
-﻿#MovAut 
+﻿##MovAut 
 
 Un rover equipado con ultrasonidos comunicado con pc. Puede dirigirse manualmente o darle una posicion, a la que él tratará de llegar evitando obstáculos.
 
@@ -17,6 +17,8 @@ Un rover equipado con ultrasonidos comunicado con pc. Puede dirigirse manualment
 * El robot tendria dos modos:
 	* Controlado desde el ordenador.
 	* Modo autónomo, en el que el ordenador calcula una ruta hasta una posicion ordenada.
+
+## Sensores y actuadores
 
 * Sensores:
   
