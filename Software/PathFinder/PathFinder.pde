@@ -31,22 +31,14 @@ void draw() {
   fill(0);
   text("Haga click para añadir puntos. Los puntos demasiado cercanos serán ignorados.\nLos puntos cercanos formarán grupos.\nPuede mover el punto de origen con wasd.", width*0.5, height*0.1);
 
-  getRutas(origen,mouse);
-  fill(0,0,255);
-  for(int i=0;i<rutas.size();i++)
-    line(origen,rutas.get(i).get(0));
+  if(key=='p')
+    getRutas(origen, mouse);
+  
+  fill(0, 0, 255);
+  for (int i=0; i<rutas.size(); i++)
+    line(origen, rutas.get(i).get(0));
 
-
-  /*if (obstaculos.size()>0) { 
-    stroke(255, 0, 0);
-    drawPoint(origen);
-    fill(255, 0, 0);
-  } else {
-    stroke(0, 255, 0);
-    drawPoint(origen);
-    fill(0, 255, 0);
-  }*/
-  stroke(0,255,0);
+  stroke(0, 255, 0);
   line(origen, mouse);
 
   stroke(0);
@@ -54,7 +46,7 @@ void draw() {
     for (int j=0; j<objetos.get(i).size(); j++) {
       drawPoint(objetos.get(i).get(j));
       fill(0);
-      text(j, objetos.get(i).get(j).x, objetos.get(i).get(j).y);
+      text(j, objetos.get(i).get(j).x, objetos.get(i).get(j).y+10);
     }
   }
 
@@ -62,7 +54,7 @@ void draw() {
   text(obstaculos.size(), 50, 50);
   text(objetos.size(), 50, 100);
 
-  text(anguloY(mouse,origen)*360.0/(2*PI),mouseX,mouseY);
+  text(anguloY(mouse, origen)*360.0/(2*PI), mouseX, mouseY);
 }
 
 void drawPoint(Punto p) {  //dibuja un punto de una forma mas visual que point()
@@ -76,11 +68,12 @@ void addPoint(int x, int y) { //añade un punto al grupo que este suficientement
   boolean demasiadoCerca = false;
   Punto nuevo = new Punto(x, y);
   int grupo=-1;
-  for (int i=0; i<objetos.size(); i++) { //este for comprueba que el punto no esta demasiado cerca a ningun otro grupo
-    for (int j=0; j<objetos.get(i).size(); j++) {
+  for (int i=0; i<objetos.size(); i++) //este for comprueba que el punto no esta demasiado cerca a ningun otro grupo
+    for (int j=0; j<objetos.get(i).size(); j++)
       if (dist(objetos.get(i).get(j), nuevo)<10)
         demasiadoCerca=true;
-    }
+  
+  for (int i=0; i<objetos.size(); i++) {
   obstacles:
     for (int j=0; j<objetos.get(i).size(); j++) {
       if (dist(objetos.get(i).get(j), nuevo)<20 && !demasiadoCerca) {
@@ -103,7 +96,7 @@ void addPoint(int x, int y) { //añade un punto al grupo que este suficientement
   }
 }
 
-void getObstaculos(Punto inicio, Punto fin) {
+void getObstaculos(Punto inicio, Punto fin) { //calcula que objetos se interponen en el segmento indicado, y los almacena en el array obstaculos
   obstaculos.clear();
   boolean cortado;
   float a1=anguloY(fin, inicio);
@@ -121,7 +114,7 @@ void getObstaculos(Punto inicio, Punto fin) {
     cortado=false;
     for (int j=0; j<obstaculos.get(i).size()-1 /*&& !cortado*/; j++)
       for (int k=j+1; k<obstaculos.get(i).size() /*&& !cortado*/; k++)
-        if (/*dist(obstaculos.get(i).get(j), obstaculos.get(i).get(k))<25 &&*/ corte(inicio,fin, obstaculos.get(i).get(k), obstaculos.get(i).get(j))){
+        if (/*dist(obstaculos.get(i).get(j), obstaculos.get(i).get(k))<25 &&*/ corte(inicio, fin, obstaculos.get(i).get(k), obstaculos.get(i).get(j))) {
           cortado=true;
           //line(obstaculos.get(i).get(j), obstaculos.get(i).get(k));
         }
@@ -132,34 +125,63 @@ void getObstaculos(Punto inicio, Punto fin) {
   }
 }
 
-void getRutas(Punto inicio, Punto fin){
+void getRutas(Punto inicio, Punto fin) {
+  println();
   rutas.clear();
   rutas.add(new ArrayList<Punto>());
   rutas.get(0).add(inicio);
   rutas.get(0).add(fin);
 
-  for(int i=0;i<rutas.get(0).size()-1;i++){
-    float a1=anguloY(rutas.get(0).get(i+1),rutas.get(0).get(i));
-    getObstaculos(rutas.get(0).get(i),rutas.get(0).get(i+1));
-    if(obstaculos.size()>0){
-      print(i);
-      for (int j=0; j<obstaculos.size(); j++) {  //recorre todos los objetos, calcula en cada uno de ellos cual es el punto mas a la derecha y a la izquierda, y determina si esta en medio de la ruta
-        rutas.add((ArrayList<Punto>)rutas.get(i).clone());
-        rutas.add((ArrayList<Punto>)rutas.get(i).clone());
-        rutas.get(0+j*2+1).add(i+1,obstaculos.get(j).get(angMax(a1, obstaculos.get(j))));
-        rutas.get(0+j*2+2).add(i+1,obstaculos.get(j).get(angMin(a1, obstaculos.get(j))));
+  for (int k=0; k<rutas.size();k++){
+    segmentos:
+    for (int i=0; i<rutas.get(k).size()-1; i++) {
+      //print("i:",i,' ');
+      float a1=anguloY(rutas.get(k).get(i+1), rutas.get(k).get(i));
+      getObstaculos(rutas.get(k).get(i), rutas.get(k).get(i+1));
+      if (obstaculos.size()>0) { //crea un clon de la ruta añadiendo un nuevo punto, y elimina el original
+        for (int j=0; j<obstaculos.size(); j++) { 
+          rutas.add(k+j*2+1,(ArrayList<Punto>)rutas.get(k).clone());
+          rutas.add(k+j*2+2,(ArrayList<Punto>)rutas.get(k).clone());
+          rutas.get(k+j*2+1).add(i+1, obstaculos.get(j).get(angMax(a1, obstaculos.get(j))));
+          rutas.get(k+j*2+2).add(i+1, obstaculos.get(j).get(angMin(a1, obstaculos.get(j))));
+        }
+        rutas.remove(k);
+        k--;
+        break segmentos;
       }
-      rutas.remove(i);
-      //i--;
-    }  
+    }
   }
-  fill(0);
-  text(rutas.size(),50,300);
-  for(int i=0;i<rutas.size();i++)  //este for imprime todas las rutas posible en azul
-    for(int j=0;j<rutas.get(0).size()-1;j++){
-      stroke(0,0,255);
-      line(rutas.get(i).get(j),rutas.get(i).get(j+1));
+  
+  for (int i=0; i<rutas.size(); i++)  //este for imprime todas las rutas posible en azul
+    for (int j=0; j<rutas.get(i).size()-1; j++) {
+      stroke(0, 0, 255);
+      line(rutas.get(i).get(j), rutas.get(i).get(j+1));
+    }
+  
+  float distMin=0, distRuta;
+  println();
+  for (int j=0; j<rutas.get(0).size()-1; j++)
+      distMin+=dist(rutas.get(0).get(j), rutas.get(0).get(j+1));
+  println(distMin);
+  
+  while(1<rutas.size()){  //elimina rutas hasta que solo queda la mas corta
+    distRuta=0;
+    for (int j=0; j<rutas.get(1).size()-1; j++) {
+      distRuta+=dist(rutas.get(1).get(j), rutas.get(1).get(j+1));
+    }
+    println(distRuta);
+    if(distRuta<=distMin){
+      rutas.remove(0);
+      distMin=distRuta;
+    }
+    else
+      rutas.remove(1);
   }
+  
+  for (int j=0; j<rutas.get(0).size()-1; j++) { //este for imprime la ruta mas corta
+      stroke(255, 0, 0);
+      line(rutas.get(0).get(j), rutas.get(0).get(j+1));
+    }
 }
 
 void line(Punto p1, Punto p2) { //como la funcion line, pero toma puntos en vez de coordenadas
@@ -235,31 +257,37 @@ int angMin(float a1, ArrayList<Punto> objeto) {  //devuelve el indice del punto 
 }
 
 
-boolean corte(Punto a, Punto b, Punto c, Punto d) {
+boolean corte(Punto a, Punto b, Punto c, Punto d) { //devuelve TRUE si dos segmentos se cortan, FALSE si no
   int x, y;
 
+  //primero calcula la ecuacion de las rectas a partir de los puntos
   float m1=float(b.y-a.y)/float(b.x-a.x);
   float n1=float(a.y)-m1*float(a.x);
   float m2=float(d.y-c.y)/float(d.x-c.x);
   float n2=float(c.y)-m2*float(c.x);
-      
-  if (b.x==a.x){
+
+  //si una de los segmentos es vertical, su pendiente es inservible, asi que calcula x de otra forma, y luego calcula la y usando la m de la otra recta
+  if (b.x==a.x) {
     x=a.x;
     y = (int)(m2*float(x)+n2);
-  }
-  else {
+  } else {
     if (c.x==d.x)
       x=c.x;
     else 
-      x = (int)((n1-n2)/(m2-m1));
+    x = (int)((n1-n2)/(m2-m1));
     y = (int)(m1*float(x)+n1);
   }
- 
-if (x>=min(a.x, b.x) && x<=max(a.x, b.x) && y>=min(a.y, b.y) && y<=max(a.y, b.y) &&
-  x>=min(c.x, d.x) && x<=max(d.x, b.x) && y>=min(c.y, d.y) && y<=max(c.y, d.y))
-  return true;
-else
-  return false;
+
+  //aqui le decimos que si dos de los limites de los segmentos coinciden, no se cortan (es necesaria para que el pathfinder funcione)
+  if ((a.x==c.x && a.y==c.y) || (a.x==d.x && a.y==d.y) || (b.x==c.x && b.y==c.y) || (b.x==d.x && b.y==d.y))
+    return false;
+
+  //los segmentos solo se cortan si el punto de corte esta contenido en ellas
+  if (x>=min(a.x, b.x) && x<=max(a.x, b.x) && y>=min(a.y, b.y) && y<=max(a.y, b.y) &&
+    x>=min(c.x, d.x) && x<=max(d.x, b.x) && y>=min(c.y, d.y) && y<=max(c.y, d.y))
+    return true;
+  else
+    return false;
 }
 
 void mouseClicked() {
